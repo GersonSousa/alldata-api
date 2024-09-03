@@ -28,6 +28,17 @@ class UserRepository {
     });
   }
 
+  async findAll() {
+    return await database.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isActive: true,
+      },
+    });
+  }
+
   async updatePassword(id, newPassword) {
     return await database.user.update({
       where: { id },

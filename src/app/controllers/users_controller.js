@@ -27,6 +27,16 @@ class UserController {
       return next(error);
     }
   }
+
+  async index(req, res, next) {
+    try {
+      const users = await userRepository.findAll();
+      return res.json(users);
+    } catch (error) {
+      // console.error(error);
+      return next(error);
+    }
+  }
 }
 
 module.exports = new UserController();
