@@ -13,6 +13,8 @@ class AuthController {
 
       const user = await userRepository.findByEmail(email);
 
+      console.log(user);
+
       if (!user) {
         const error = new Error('Please enter a valid email and password');
         error.status = 401;
@@ -41,6 +43,8 @@ class AuthController {
       //Criar Refresh Token no futuro
       res.cookie('token', token, {
         httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
         expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
       });
 
