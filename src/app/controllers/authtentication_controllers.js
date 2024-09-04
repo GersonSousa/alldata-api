@@ -45,7 +45,9 @@ class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'Strict',
-        expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+        expires: new Date(Date.now() + 60 * 60 * 1000),
+        path: '/'
+
       });
 
       res.json({ token });
