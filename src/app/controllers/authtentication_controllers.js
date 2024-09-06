@@ -3,17 +3,18 @@ const jwt = require('jsonwebtoken');
 const mailService = require('../services/MailSender.js');
 const bcrypt = require('bcrypt');
 const { loginSchema, forgotSchema, resetSchema } = require('../validations/users_validations');
+const { ValidationError } = require('yup');
 
 class AuthController {
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
 
-      const userData = loginSchema.validate({ email, password });
+      //Validação de dados
+      await loginSchema.validate({ email, password });
 
+      //Procurar usuário
       const user = await userRepository.findByEmail(email);
-
-      console.log(user);
 
       if (!user) {
         const error = new Error('Please enter a valid email and password');
@@ -21,6 +22,7 @@ class AuthController {
         throw error;
       }
 
+      //Verificar senha
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
@@ -28,8 +30,11 @@ class AuthController {
         error.status = 401;
         throw error;
       }
+
+      //Remover senha do objeto de usuário
       user.password = undefined;
 
+      //Criação do token
       const token = jwt.sign(
         {
           id: user.id,
@@ -40,19 +45,25 @@ class AuthController {
           expiresIn: '1h',
         }
       );
-      //Criar Refresh Token no futuro
+
+      //Criação de cookie
       res.cookie('token', token, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.COOKIE_SECURE || true,
         sameSite: 'Strict',
         expires: new Date(Date.now() + 60 * 60 * 1000),
-        path: '/'
-
+        path: '/',
       });
 
-      res.json({ token });
+      //resposta
+      res.json({ token: token, user: user });
     } catch (error) {
-      // console.error(error);
+      if (error instanceof ValidationError) {
+        const validationError = new Error(error.errors);
+        validationError.status = 400;
+        return next(validationError);
+      }
+      console.error(error);
       return next(error);
     }
   }
@@ -60,7 +71,7 @@ class AuthController {
   async forgot(req, res, next) {
     try {
       const { email } = req.body;
-      const userEmail = forgotSchema.validate({ email });
+      await forgotSchema.validate({ email });
 
       const user = await userRepository.findByEmail(email);
       if (!user) {
@@ -74,13 +85,17 @@ class AuthController {
       });
 
       const forgotLink = `${process.env.BASE_URL}/reset/${user.id}/${forgotToken}`;
-      // console.log(forgotLink);
 
       const forgotMail = await mailService(email, 'Reset Password', forgotLink);
 
       return res.status(200).json({ Mail: 'Email sent' });
     } catch (error) {
-      // console.error(error);
+      if (error instanceof ValidationError) {
+        const validationError = new Error(error.errors);
+        validationError.status = 400;
+        return next(validationError);
+      }
+      console.error(error);
       return next(error);
     }
   }
@@ -90,7 +105,7 @@ class AuthController {
       const { id, forgotToken } = req.params;
       const { password, confirmPassword } = req.body;
 
-      const reset = resetSchema.validate({
+      await resetSchema.validate({
         password: password,
         confirmPassword: confirmPassword,
       });
@@ -103,7 +118,12 @@ class AuthController {
 
       return res.status(200).json({ message: 'Password updated' });
     } catch (error) {
-      // console.error(error);
+      if (error instanceof ValidationError) {
+        const validationError = new Error(error.errors);
+        validationError.status = 400;
+        return next(validationError);
+      }
+      console.error(error);
       return next(error);
     }
   }

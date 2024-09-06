@@ -10,7 +10,7 @@ const routes = require('./routes/index');
 const app = express();
 app.use(
   cors({
-    origin: 'https://alldataservice.netlify.app',
+    origin: process.env.BASE_URL,
     credentials: true,
   })
 );
