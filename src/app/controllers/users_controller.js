@@ -37,6 +37,15 @@ class UserController {
       return next(error);
     }
   }
+
+  async home(req, res, next) {
+    try {
+      return res.json({ message: 'Home Page' });
+    } catch (error) {
+      console.error(error);
+      return next(error);
+    }
+  }
 }
 
 module.exports = new UserController();

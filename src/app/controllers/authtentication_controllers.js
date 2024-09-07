@@ -45,11 +45,10 @@ class AuthController {
           expiresIn: '1h',
         }
       );
-
       //Criação de cookie
       res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.COOKIE_SECURE || true,
+        httpOnly: false,
+        secure: true,
         sameSite: 'Strict',
         expires: new Date(Date.now() + 60 * 60 * 1000),
         path: '/',
