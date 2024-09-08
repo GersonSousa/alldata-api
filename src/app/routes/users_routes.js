@@ -7,6 +7,6 @@ const user = Router();
 
 user.post('/', userController.store);
 user.get('/', userController.index);
-user.get('/home', userController.home);
+user.get('/home', ensureAuthenticated, userController.home);
 
 module.exports = user;
