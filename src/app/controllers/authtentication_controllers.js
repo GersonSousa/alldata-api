@@ -47,8 +47,9 @@ class AuthController {
       );
       //Criação de cookie
       res.cookie('token', token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: true,
+        sameSite: 'Strict',
         expires: new Date(Date.now() + 60 * 60 * 1000),
         path: '/',
       });
