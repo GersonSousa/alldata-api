@@ -48,7 +48,7 @@ class AuthController {
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.COOKIE_SECURE,
-        sameSite: process.env.COOKIE.SAMESITE,
+        sameSite: process.env.COOKIE_SAMESITE,
         expires: new Date(Date.now() + 60 * 60 * 1000),
       });
 
