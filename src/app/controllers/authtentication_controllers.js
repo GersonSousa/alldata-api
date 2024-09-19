@@ -10,21 +10,19 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-      //Validação de dados
+      //Validação dos dados
       await loginSchema.validate({ email, password });
 
-      //Procurar usuário
+      //Procurado o email enviado e Validar se existe
       const user = await userRepository.findByEmail(email);
-
       if (!user) {
         const error = new Error('Please enter a valid email and password');
         error.status = 401;
         throw error;
       }
 
-      //Verificar senha
+      //Comparar a senha enviada com a salva no banco de dados
       const isPasswordValid = await bcrypt.compare(password, user.password);
-
       if (!isPasswordValid) {
         const error = new Error('Please enter a valid email and password');
         error.status = 401;
@@ -45,16 +43,16 @@ class AuthController {
           expiresIn: '1h',
         }
       );
-      //Criação de cookie
+
+      //Salvar o token no cookie
       res.cookie('token', token, {
-        httpOnly: false,
-        secure: true,
-        sameSite: 'Strict',
+        httpOnly: true,
+        secure: process.env.COOKIE_SECURE,
+        sameSite: process.env.COOKIE.SAMESITE,
         expires: new Date(Date.now() + 60 * 60 * 1000),
-        path: '/',
       });
 
-      //resposta
+      //Retornar os dados do usuário e o token
       res.json({ token: token, user: user });
     } catch (error) {
       if (error instanceof ValidationError) {

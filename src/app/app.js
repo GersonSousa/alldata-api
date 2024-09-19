@@ -8,12 +8,7 @@ dotenv.config();
 const routes = require('./routes/index');
 
 const app = express();
-app.use(
-  cors({
-    origin: process.env.BASE_URL,
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.json());
