@@ -8,7 +8,14 @@ dotenv.config();
 const routes = require('./routes/index');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.json());
