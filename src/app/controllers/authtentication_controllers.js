@@ -44,14 +44,6 @@ class AuthController {
         }
       );
 
-      //Salvar o token no cookie
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.COOKIE_SECURE,
-        sameSite: process.env.COOKIE_SAMESITE,
-        expires: new Date(Date.now() + 60 * 60 * 1000),
-      });
-
       //Retornar os dados do usuário e o token
       res.json({ token: token, user: user });
     } catch (error) {
