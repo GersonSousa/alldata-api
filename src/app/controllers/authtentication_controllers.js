@@ -44,6 +44,11 @@ class AuthController {
         }
       );
 
+      res.cookie('Acesstoken', token, {
+        expires: new Date(Date.now() + 3600000), // 1 hour
+        httpOnly: false,
+      });
+
       //Retornar os dados do usuário e o token
       res.json({ token: token, user: user });
     } catch (error) {

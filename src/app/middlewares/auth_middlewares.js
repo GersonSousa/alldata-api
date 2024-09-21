@@ -1,40 +1,18 @@
 const jwt = require('jsonwebtoken');
-
 async function ensureAuthenticated(req, res, next) {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).send({ error: 'Token not provided' });
+  }
   try {
-    const authorizationHeader = req.headers.authorization;
-
-    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      const error = new Error('Access token not provided or incorrectly formatted');
-      error.status = 401;
-      return next(error);
-    }
-
-    const accessToken = authorizationHeader.split(' ')[1];
-
-    if (!accessToken) {
-      const error = new Error('Access token not provided');
-      error.status = 401;
-      return next(error);
-    }
-
-    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
-
-    if (!decoded) {
-      const error = new Error('Invalid access token');
-      error.status = 401;
-      return next(error);
-    }
-
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-
-    console.log(req.user);
 
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
-    error.status = 401; // Ensure consistent error status code
-    next(error);
+    console.error('Erro de verificação do token:', error);
+    return res.status(401).json({ error: 'Token inválido ou expirado' });
   }
 }
 
