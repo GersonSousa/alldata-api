@@ -6,6 +6,6 @@ const { Router } = require('express');
 const user = Router();
 
 user.post('/', userController.store);
-user.get('/', userController.index);
+user.get('/', ensureAuthenticated, userController.index);
 
 module.exports = user;

@@ -44,13 +44,14 @@ class AuthController {
         }
       );
 
-      res.cookie('Acesstoken', token, {
+      res.cookie('auth', token, {
         expires: new Date(Date.now() + 3600000), // 1 hour
-        httpOnly: false,
+        httpOnly: true,
+        path: '/',
       });
 
-      //Retornar os dados do usuário e o token
-      res.json({ token: token, user: user });
+      //Retornar os dados do usuário
+      res.json({ name: user.name, email: user.email });
     } catch (error) {
       if (error instanceof ValidationError) {
         const validationError = new Error(error.errors);

@@ -31,7 +31,8 @@ class UserController {
   async index(req, res, next) {
     try {
       const users = await userRepository.findAll();
-      return res.json(users);
+
+      return res.json({ users: users });
     } catch (error) {
       // console.error(error);
       return next(error);
