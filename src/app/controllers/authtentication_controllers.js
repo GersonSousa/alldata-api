@@ -37,6 +37,7 @@ class AuthController {
         {
           id: user.id,
           name: user.name,
+          email: user.email,
         },
         process.env.JWT_SECRET,
         {
@@ -118,6 +119,19 @@ class AuthController {
         validationError.status = 400;
         return next(validationError);
       }
+      console.error(error);
+      return next(error);
+    }
+  }
+
+  async checkAuth(req, res, next) {
+    try {
+      if (!req.cookies.auth) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      const user = req.user;
+      res.json({ authenticated: true, user });
+    } catch (error) {
       console.error(error);
       return next(error);
     }
