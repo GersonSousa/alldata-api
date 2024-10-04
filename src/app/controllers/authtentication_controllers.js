@@ -136,6 +136,16 @@ class AuthController {
       return next(error);
     }
   }
+
+  async logout(req, res, next) {
+    try {
+      res.clearCookie('auth', { path: '/' });
+      return res.status(200).json({ message: 'Logged out' });
+    } catch (error) {
+      console.error(error);
+      return next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

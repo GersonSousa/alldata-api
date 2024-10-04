@@ -9,5 +9,6 @@ authentication.post('/', authController.login);
 authentication.post('/forgot', authController.forgot);
 authentication.post('/reset-password/:id/:forgotToken', authController.resetPassword);
 authentication.get('/check-auth', ensureAuthenticated, authController.checkAuth);
+authentication.post('/logout', ensureAuthenticated, authController.logout);
 
 module.exports = authentication;
