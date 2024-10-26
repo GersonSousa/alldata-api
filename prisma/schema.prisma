@@ -8,14 +8,35 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(uuid())
-  email      String    @unique
-  name       String
-  password   String
-  isActive   Boolean   @default(true)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  inactiveAt DateTime?
+  id           String         @id @default(uuid())
+  email        String         @unique
+  name         String
+  password     String
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  inactiveAt   DateTime?
+  role         Role           @default(user)
+  RefreshToken RefreshToken[]
 
   @@map("users")
+}
+
+enum Role {
+  admin
+  user
+  agent
+  moderator
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.VarChar(500)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("refresh_tokens")
 }
