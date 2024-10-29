@@ -23,7 +23,7 @@ class UserController {
 
       return res.status(201).json({ Usuário: newUser });
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       return next(error);
     }
   }
@@ -34,7 +34,7 @@ class UserController {
 
       return res.json({ users: users });
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       return next(error);
     }
   }
