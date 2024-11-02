@@ -24,6 +24,8 @@ class UserRepository {
         email: true,
         isActive: true,
         password: true,
+        photo: true,
+        role: true,
       },
     });
   }
